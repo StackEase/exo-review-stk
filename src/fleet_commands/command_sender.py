@@ -24,9 +24,10 @@ class Publisher(Protocol):
 
 
 PLAN_QUERY = """
-    SELECT site_id, power_mw
+    SELECT DISTINCT ON (site_id) site_id, power_mw
     FROM plan
     WHERE delivery_start = %(quarter)s
+    ORDER BY site_id, computed_at DESC
 """
 
 
@@ -37,7 +38,7 @@ def quarter_start(at: datetime) -> datetime:
 
 
 def load_plan_mw(conn, quarter: datetime) -> dict[int, float]:
-    """Plan of every site for the quarter (MW, positive = charge)."""
+    """Latest plan version of every site for the quarter (MW, positive = charge)."""
     with conn.cursor() as cur:
         cur.execute(PLAN_QUERY, {"quarter": quarter})
         return {site_id: power_mw for site_id, power_mw in cur.fetchall()}
