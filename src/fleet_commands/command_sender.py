@@ -45,7 +45,8 @@ def load_plan_mw(conn, quarter: datetime) -> dict[int, float]:
 
 
 def compute_command_kw(plan_mw: float, site: Site) -> float:
-    return plan_mw * 1000
+    command_kw = plan_mw * 1000
+    return min(max(command_kw, -site.max_discharge_kw), site.max_charge_kw)
 
 
 def build_payload(command_kw: float) -> str:

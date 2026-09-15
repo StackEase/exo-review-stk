@@ -44,6 +44,10 @@ def test_plan_is_converted_to_kw():
     assert compute_command_kw(0.3, SITE) == 300.0
 
 
+def test_command_is_clamped_to_site_limit():
+    assert compute_command_kw(0.8, SITE) == 500.0
+
+
 def test_payload_follows_contract():
     assert json.loads(build_payload(120.0)) == {
         "schema_version": 1,
