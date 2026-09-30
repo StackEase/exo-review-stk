@@ -1,0 +1,29 @@
+// Tables read by fleet-commands.
+// Conventions: power in MW, positive = charge, negative = discharge.
+// Timestamps are timestamptz, stored and compared in UTC.
+
+Project fleet_commands {
+  database_type: 'PostgreSQL'
+}
+
+Table site {
+  id integer [pk]
+  client_id text [not null, unique, note: 'Control box identifier, e.g. BOX-0001. Used in the MQTT topic.']
+  max_charge_kw float8 [not null, note: 'kW, > 0. A command must never exceed it.']
+  max_discharge_kw float8 [not null, note: 'kW, > 0. A command must never go below -max_discharge_kw.']
+
+  Note: 'A battery installed at a customer site, driven by one control box. Loaded by the caller and passed to run_tick.'
+}
+
+Table plan {
+  site_id integer [not null, ref: > site.id]
+  delivery_start timestamptz [not null, note: 'Start of the quarter-hour (UTC).']
+  computed_at timestamptz [not null, note: 'Version of the plan. For a given site and quarter-hour, the latest version wins.']
+  power_mw float8 [not null, note: 'Planned power, MW, positive = charge.']
+
+  indexes {
+    (site_id, delivery_start, computed_at) [pk]
+  }
+
+  Note: 'Market schedule per site and quarter-hour, written daily by the optimizer. A recomputation adds a new version instead of overwriting.'
+}
