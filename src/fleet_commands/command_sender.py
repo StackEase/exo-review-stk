@@ -36,11 +36,7 @@ class Site:
 
 
 class Publisher(Protocol):
-    """MQTT client used to send commands.
-
-    Created by the caller and passed to ``run_tick``. Any object with this
-    ``publish`` method works; the tests use a fake that records the messages.
-    """
+    """MQTT client used to send commands, provided by the caller."""
 
     def publish(self, topic: str, payload: str, qos: int) -> None: ...
 
@@ -103,8 +99,8 @@ def run_tick(
     A site without a plan for the current quarter-hour receives 0 kW. Commands are
     absolute values: sending the same command twice is harmless.
 
-    :param conn: PostgreSQL connection (psycopg2), created by the caller.
-    :param publisher: MQTT client, created by the caller.
+    :param conn: PostgreSQL connection (psycopg2).
+    :param publisher: MQTT client.
     :param sites: sites to command.
     :param environment: ``dev``, ``staging`` or ``prod``, used in the MQTT topic.
     :param now: current time (timezone-aware).
