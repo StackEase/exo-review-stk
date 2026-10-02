@@ -30,6 +30,8 @@ optimizer that writes the plan, and telemetry ingestion.
 
 ## Development
 
+Requires [uv](https://docs.astral.sh/uv/) and Python 3.11+.
+
 ```bash
 uv sync
 uv run pytest -q

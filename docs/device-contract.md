@@ -8,9 +8,10 @@ Commands are published on `<environment>/devices/<client_id>/command`, QoS 1.
 {"schema_version": 1, "mode": "power_reference", "power_command_kw": 120.0}
 ```
 
+- `mode`: always `power_reference` in version 1.
 - `power_command_kw`: kW, **positive = charge**, negative = discharge.
 - Devices reject any command whose `schema_version` they do not support, and keep
-  their last valid command.
+  their last valid command. A rejected command does not count as a valid one.
 - A device that receives no valid command for 60 s falls back to 0 kW.
 
 ## Evolving the contract

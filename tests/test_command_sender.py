@@ -1,7 +1,13 @@
 import json
 from datetime import datetime, timezone
 
-from fleet_commands.command_sender import Site, build_payload, compute_command_kw, quarter_start, run_tick
+from fleet_commands.command_sender import (
+    Site,
+    build_payload,
+    compute_command_kw,
+    quarter_start,
+    run_tick,
+)
 
 SITE = Site(id=1, client_id="BOX-0001", max_charge_kw=500.0, max_discharge_kw=500.0)
 NOW = datetime(2026, 10, 25, 10, 7, 42, tzinfo=timezone.utc)

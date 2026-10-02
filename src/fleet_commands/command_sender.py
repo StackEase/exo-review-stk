@@ -36,7 +36,11 @@ class Site:
 
 
 class Publisher(Protocol):
-    """MQTT client used to send commands (injected, see ``run_tick``)."""
+    """MQTT client used to send commands.
+
+    Created by the caller and passed to ``run_tick``. Any object with this
+    ``publish`` method works; the tests use a fake that records the messages.
+    """
 
     def publish(self, topic: str, payload: str, qos: int) -> None: ...
 
@@ -59,7 +63,7 @@ def quarter_start(at: datetime) -> datetime:
 def load_plan_mw(conn, quarter: datetime) -> dict[int, float]:
     """Load the latest plan version of every site for a quarter-hour.
 
-    :param conn: database connection.
+    :param conn: PostgreSQL connection (psycopg2, default transactional mode).
     :param quarter: start of the quarter-hour (timezone-aware).
     :returns: planned power by site id, in MW (positive = charge). Sites without
         a plan for this quarter-hour are absent.
@@ -99,8 +103,8 @@ def run_tick(
     A site without a plan for the current quarter-hour receives 0 kW. Commands are
     absolute values: sending the same command twice is harmless.
 
-    :param conn: database connection.
-    :param publisher: MQTT client.
+    :param conn: PostgreSQL connection (psycopg2), created by the caller.
+    :param publisher: MQTT client, created by the caller.
     :param sites: sites to command.
     :param environment: ``dev``, ``staging`` or ``prod``, used in the MQTT topic.
     :param now: current time (timezone-aware).
